@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const productsRouter = require("./routes/products.router");
+const ordersRouter = require("./routes/orders.router");
 const app = express();
 
 const {
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/products", productsRouter);
+app.use("/api/orders", ordersRouter);
 
 // Handle 404 response
 app.use(resourceNotFound);

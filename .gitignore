@@ -152,3 +152,4 @@ dist
 .pnp.*
 mysql/db.sql
 mysql/data.csv
+mysql/db_script.sql
