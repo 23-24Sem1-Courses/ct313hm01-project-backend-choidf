@@ -1,4 +1,5 @@
 const knex = require("../database/knex");
+const Paginator = require("../services/paginator");
 
 function createProductsService() {
   function readProduct(payload) {
@@ -19,14 +20,33 @@ function createProductsService() {
     return { product_id, ...product };
   }
   async function getManyProducts(query) {
-    const { name } = query;
-    return knex("products")
+    const { name, page = 1, limit = 5 } = query;
+    const paginator = new Paginator(page, limit);
+    let results = await knex("products")
       .where((builder) => {
         if (name) {
           builder.where("name", "like", `%${name}%`);
         }
       })
-      .select("*");
+      .select(
+        knex.raw("count(product_id) OVER() AS recordsCount"),
+        "product_id",
+        "name",
+        "price",
+        "image"
+      )
+      .limit(paginator.limit)
+      .offset(paginator.offset);
+    let totalRecords = 0;
+    results = results.map((result) => {
+      totalRecords = result.recordsCount;
+      delete result.recordsCount;
+      return result;
+    });
+    return {
+      metadata: paginator.getMetadata(totalRecords),
+      products: results,
+    };
   }
   async function getProductById(id) {
     return knex("products").where("product_id", id).select("*").first();

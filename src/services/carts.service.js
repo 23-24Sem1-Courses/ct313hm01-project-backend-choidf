@@ -1,4 +1,5 @@
 const knex = require("../database/knex");
+const Paginator = require("../services/paginator");
 
 function createCartsService() {
   function readCart(payload) {
@@ -22,8 +23,9 @@ function createCartsService() {
     return { cart_id, ...cart };
   }
   async function getManyCarts(query) {
-    const { name, order_id, product_id } = query;
-    return knex("carts")
+    const { name, order_id, product_id, page = 1, limit = 5 } = query;
+    const paginator = new Paginator(page, limit);
+    let results = await knex("carts")
       .where((builder) => {
         if (name) {
           builder.where("name", "like", `%${name}%`);
@@ -35,7 +37,27 @@ function createCartsService() {
           builder.where("product_id", product_id);
         }
       })
-      .select("*");
+      .select(
+        knex.raw("count(cart_id) OVER() AS recordsCount"),
+        "cart_id",
+        "product_id",
+        "order_id",
+        "name",
+        "price",
+        "image"
+      )
+      .limit(paginator.limit)
+      .offset(paginator.offset);
+    let totalRecords = 0;
+    results = results.map((result) => {
+      totalRecords = result.recordsCount;
+      delete result.recordsCount;
+      return result;
+    });
+    return {
+      metadata: paginator.getMetadata(totalRecords),
+      carts: results,
+    };
   }
   async function getCartById(id) {
     return knex("carts").where("cart_id", id).select("*").first();
