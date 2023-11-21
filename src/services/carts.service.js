@@ -23,7 +23,7 @@ function createCartsService() {
     return { cart_id, ...cart };
   }
   async function getManyCarts(query) {
-    const { name, order_id, product_id, page = 1, limit = 5 } = query;
+    const { name, order_id, product_id, page = 1, limit = 100 } = query;
     const paginator = new Paginator(page, limit);
     let results = await knex("carts")
       .where((builder) => {
