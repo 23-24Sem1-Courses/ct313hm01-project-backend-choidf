@@ -44,7 +44,8 @@ function createCartsService() {
         "order_id",
         "name",
         "price",
-        "image"
+        "image",
+        "quantity"
       )
       .limit(paginator.limit)
       .offset(paginator.offset);
