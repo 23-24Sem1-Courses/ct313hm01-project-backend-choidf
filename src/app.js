@@ -3,6 +3,7 @@ const cors = require("cors");
 const productsRouter = require("./routes/products.router");
 const ordersRouter = require("./routes/orders.router");
 const cartsRouter = require("./routes/carts.router");
+
 const app = express();
 
 const {
@@ -20,6 +21,9 @@ app.get("/", (req, res) => {
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/carts", cartsRouter);
+
+// Access the images folder
+app.use('/images', express.static(__dirname + 'images'));
 
 // Handle 404 response
 app.use(resourceNotFound);
