@@ -153,3 +153,4 @@ dist
 mysql/db.sql
 mysql/data.csv
 mysql/db_script.sql
+package-lock.json
