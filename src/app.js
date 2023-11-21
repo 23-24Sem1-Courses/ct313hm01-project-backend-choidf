@@ -23,7 +23,7 @@ app.use("/api/orders", ordersRouter);
 app.use("/api/carts", cartsRouter);
 
 // Access the images folder
-app.use('/images', express.static(__dirname + 'images'));
+app.use('/api/images', express.static(__dirname + '/images'));
 
 // Handle 404 response
 app.use(resourceNotFound);
